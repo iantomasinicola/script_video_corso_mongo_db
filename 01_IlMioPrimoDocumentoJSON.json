@@ -1,0 +1,13 @@
+{"NomeCorso"		 : "Analisi dei dati con MongoDB",
+ "NumeroPartecipanti": 6,
+ "DataCreazione"	 : "2020-12-01",
+ "SoftwareRichiesti" : ["MongoDb",
+                        "Compass"],
+ "Prezzo"			 : null,
+ "Attivo"			 :true,
+ "Docente"			 : {"Nome"   : "Nicola",
+						"Cognome": "Iantomasi",
+						"Email"  : ["nicola.iantomasi@yimp.it",
+									"iantomasi.nicola@gmail.com"]
+					   }
+}

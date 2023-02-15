@@ -1,0 +1,242 @@
+/****************************/
+/*FILTRARE I DATI */
+/****************************/
+use corso_mongo_db;
+
+
+/*Esempio 1: ESTRARRE TUTTI I DOCUMENTI DI UNA COLLECTION
+Estrarre tutti i documenti della collection clienti
+SELECT * 
+FROM   clienti
+*/  
+db.clienti.find();
+
+/*Nota: mongosh mostra fino a 20 documenti*/
+db.fatture.find();
+
+/*Per vedere tutti i documenti posso usare .toArray()*/
+db.fatture.find().toArray();
+
+
+/*Esempio 2: ESTRARRE TUTTI I DOCUMENTI DI UNA COLLECTION CHE RISPETTANO UN FILTRO
+Estrarre i documenti della collection clienti
+la cui chiave nome è uguale alla stringa "Nicola"
+SELECT * 
+FROM   clienti
+WHERE  nome = 'Nicola'
+*/
+db.clienti.find(
+				{"nome":{$eq : "Nicola"}}
+			    );
+
+/* a meno di usare espressioni regolari, posso riscrivere la query in questo modo*/
+db.clienti.find(
+				{"nome":"Nicola"}
+			    );
+								
+
+
+/*ATTENZIONE: se inseriamo una chiave che non esiste, otterremo sempre zero righe
+e nessun messaggio di errore. I nomi delle chiavi sono Case Sensitive. Di conseguenza
+il codice seguente in cui usiamo "Nome" invece di "nome" restituirà zero righe*/
+db.clienti.find(
+				{"Nome":"Nicola"}
+			    );
+
+/*ATTENZIONE: analogamente se "sbagliamo" il nome della Collection (anch'esso case
+sensitive*/
+db.Clienti.find(
+				{"nome":"Nicola"}
+			    );
+
+
+
+/*Esempio 3: ESTRARRE UN SOLO DOCUMENTO CHE RISPETTA UN FILTRO
+Estrarre un singolo documento dela collection clienti
+la cui chiave nome è uguale alla stringa "Nicola"
+SELECT TOP 1 * 
+FROM   clienti
+WHERE  nome = 'Nicola'
+*/
+db.clienti.findOne(
+					{"nome":"Nicola"}
+				  );
+
+
+
+/*Esempio 4: CONTARE I DOCUMENTI CHE RISPETTANO UN FILTRO
+contare tutti i documenti della collection clienti
+dove il nome è uguale alla stringa "Nicola"
+SELECT COUNT(*)
+FROM   clienti
+WHERE  nome = 'Nicola'
+*/
+db.clienti.countDocuments(
+						  {"nome":"Nicola"}
+						  );
+						  
+//Se voglio semplicemente contare tutti i documenti posso scrivere
+db.clienti.countDocuments();
+
+
+
+/*Esempio 5: VISUALIZZARE SOLO ALCUNE CHIAVI DEI DOCUMENTI CHE RISPETTANO UN FILTRO
+Estrarre i documenti della collection clienti 
+la cui chiave nome è uguale alla stringa "Nicola", 
+visualizzando soltanto la chiave nome e l'_id (presente di default)
+SELECT _id, nome
+FROM   clienti
+WHERE  nome = 'Nicola'
+*/
+db.clienti.find(
+				{"nome":"Nicola"},
+				{"nome":true}
+			   );
+
+
+//Se voglio semplicemente visualizzare le colonne nome e _id di tutti i documenti 
+//posso scrivere
+db.clienti.find(
+			    {},
+				{"nome":true}
+				);
+
+//Per non visualizzare la chiave _id devo specificarlo tramite il codice
+db.clienti.find(
+			    {},
+				{"nome":true,
+				 "_id" :false}
+				);
+
+
+
+/*Esempio 6: FILTRI CON >
+Estrarre le fatture con importo maggiore di 25 (25 escluso)
+SELECT *
+FROM   fatture
+WHERE  importo > 25
+*/
+db.fatture.find(
+				{"importo":{$gt : 25}}
+			   );
+
+
+
+/*Esempio 7: FILTRI CON > E <
+Estrarre le fatture con importo maggiore 
+di 25 e minore di 32 (estremi esclusi)
+SELECT *
+FROM   fatture
+WHERE  importo > 25
+   AND importo < 32
+*/
+db.fatture.find(
+				{"importo":{$gt : 25, 
+							$lt : 32}
+				}
+			   );
+
+
+/*ATTENZIONE: la query seguente NON fa quanto richiesto 
+dall'esercizio*/
+db.fatture.find(
+				{"importo":{$gt : 25}, 
+				 "importo":{$lt : 32}
+				}
+			   );
+
+//essa infatti è equivalente a 
+
+db.fatture.find(
+				{"importo":{$lt : 32}
+				}
+			   );
+
+
+
+/*Esempio 8: FILTRI CON >= E <=
+Estrarre le fatture con importo maggiore 
+di 25 e minore di 32 (estremi inclusi)
+SELECT *
+FROM   fatture
+WHERE  importo >= 25
+   AND importo <= 32
+*/
+
+db.fatture.find(
+				{"importo":{$gte : 25, 
+							$lte : 32}
+				}
+			   );
+
+
+
+/*Esempio 9: FILTRI CON OR
+Estrarre i documenti della Collection clienti che rispettano almeno una 
+delle seguenti condizioni:
+- il nome è "Nicola"
+- la regione residenza è "Piemonte"
+SELECT *
+FROM   clienti
+WHERE  nome = 'Nicola'
+	OR regione_residenza = 'Piemonte'
+*/
+db.clienti.find(
+				{
+				$or:[
+                     {"nome":"Nicola"},
+                     {"regione_residenza":"Piemonte"}
+                    ] 
+                }
+               );
+			   
+/*Esempio 9.2
+Estrarre i clienti residenti in Molise o Piemonte */
+	   
+db.clienti.find(
+				{
+				$or:[
+                     {"regione_residenza":"Molise"},
+                     {"regione_residenza":"Piemonte"}
+                    ] 
+                }
+               );
+
+/*oppure */		   
+db.clienti.find({"regione_residenza":{$in:["Molise","Piemonte"]}                   
+                }
+               );
+			   
+
+
+/*Esempio 10: FILTRI CON AND
+Estrarre i documenti della Collection clienti che rispettano
+ entrambe le seguenti condizioni:
+- il nome è "Nicola"
+- la regione residenza è "Piemonte"
+SELECT *
+FROM   clienti
+WHERE  nome = 'Nicola'
+   AND regione_residenza = 'Piemonte'
+*/
+
+/*Abbiamo già effettuato filtri con l'AND negli esempi precedenti. Basta 
+dividere i filtri con una virgola*/
+db.clienti.find(
+                {
+				 "nome":"Nicola",
+		         "regione_residenza":"Piemonte"
+                }
+               );
+
+//Tuttavia è possibile anche utilizzare una sintassi analoga a quella dell'OR
+db.clienti.find(
+				{
+				$and:[
+                     {"nome":"Nicola"},
+                     {"regione_residenza":"Piemonte"}
+                    ] 
+                }
+               );
+
+

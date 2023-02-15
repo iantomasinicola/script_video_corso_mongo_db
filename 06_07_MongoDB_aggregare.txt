@@ -1,0 +1,178 @@
+/********************************/
+/*RAGGRUPPARE I DATI            */
+/********************************/
+
+
+/*Esempio 1: RAGGRUPPARE SU UNA SINGOLA CHIAVE
+Estrarre somma, media e conteggio delle fatture raggruppate per Fornitore
+SELECT   id_fornitore,
+	     SUM(prezzo) AS prezzoTotale,
+		 AVG(prezzo) AS prezzoMedio,
+		 COUNT(*)    AS Conteggio
+FROM     fatture
+GROUP BY id_fornitore
+
+*/
+use corso_mongo_db;
+
+db.fatture.aggregate(
+					[ 
+						{$group:{"_id"      :{"id_fornitore": "$id_fornitore"},
+								 "conteggio":{$sum:1} 	 
+								}   
+						}
+					]
+				    );
+
+db.fatture.aggregate(
+					[ 
+						{$group:{"_id"      :"$id_fornitore",
+								 "conteggio":{$sum:1} 	 
+								}   
+						}
+					]
+				    );
+/*Esempio 2: SOMMARE UNA COLONNA CALCOLATA
+Estrarre la spesa totale (prezzo*quantita) della Collection Spese,
+raggruppato per prodotto
+SELECT   nome_prodotto,
+	     SUM(prezzo*quantita) AS SpesaTotale
+FROM     spese
+GROUP BY nome_prodotto
+
+*/
+
+db.spese.aggregate(
+					[
+						{$group:{"_id"            :{"nome_prodotto": "$nome_prodotto"},
+								 "spesa_totale"    :{$sum:{$multiply:["$prezzo","$quantita"]}
+											       }	 
+								}   
+						}
+					]
+					);
+
+//oppure
+
+db.spese.aggregate(
+					[	
+						{$addFields: {"spesa"     : {$multiply:["$prezzo","$quantita"]}
+							         }
+						},
+						{$group:{"_id"            :{"nome_prodotto": "$nome_prodotto"},
+								 "spesa_totale    ":{$sum:"$spesa"
+											       } 
+								}   
+						}
+					]
+					);
+
+
+
+/*Esempio 3: RAGGRUPPARE SU UNA FUNZIONE APPLICATA AD UNA CHIAVE
+Estrarre la spesa totale (prezzo*quantita) della Collection spese,
+raggruppato per anno di spesa
+
+SELECT   YEAR(Dataspese) AS Anno,
+	     SUM(prezzo*quantita) AS SpesaTotale
+FROM     spese
+GROUP BY YEAR(Dataspese)
+*/
+
+db.spese.aggregate(
+					[
+						{$group:{"_id"            :{"anno": {$year:"$data_spesa"}
+												   },
+						 		 "spesa_totale"    :{$sum:{$multiply:["$prezzo","$quantita"]}
+												   }
+								}   
+						}
+					]
+					);
+
+//oppure
+
+db.spese.aggregate(
+					[
+						{$addFields: {"anno"     : {"$year" : "$data_spesa"},
+							          "spesa"    : {$multiply:["$prezzo","$quantita"]}
+							         }
+						},
+						{$group:{"_id"            :{"anno":"$anno"},					
+						 		 "spesa_totale"    :{$sum:"$spesa"}
+							    }   
+						}
+					]
+					);
+
+
+/*Per visualizzare i dati in modo diverso*/
+
+db.spese.aggregate(
+					[
+						{$addFields: {"anno"     : {"$year" : "$data_spesa"},
+							          "spesa"    : {$multiply:["$prezzo","$quantita"]}
+							         }
+						},
+						{$group:{"_id"            :{"anno":"$anno"},					
+						 		 "spesa_totale"    :{$sum:"$spesa"}
+							    }   
+						},
+						{$addFields: {"anno" :"$_id.anno"
+							         }
+						},
+						{$project:{
+								   "anno"		:true,
+								   "spesa_totale":true,
+								   "_id"		:false
+								  } 
+						}
+					]
+					);
+
+
+
+/*Esempio 4: RAGGRUPPARE SU PIÙ DI UNA COLONNA
+Estrarre la spesa totale (prezzo*quantita) della Collection spese,
+raggruppato per anno e mese di spesa
+
+SELECT   YEAR(data_spesa) AS Anno,
+		 MONTH(data_spesa) AS Mese,
+	     SUM(prezzo*quantita) AS SpesaTotale
+FROM     spese
+GROUP BY YEAR(data_spesa),
+		 MONTH(data_spesa)
+*/
+
+db.spese.aggregate(
+					[
+						{$group:{"_id"            :{"anno": {$year:"$data_spesa"},
+													"mese": {$month:"$data_spesa"}
+												   },
+						 		 "spesa_totale"    :{$sum:{$multiply:["$prezzo","$quantita"]}
+												   }
+								}   
+						}
+					]
+					);
+
+//oppure
+
+db.spese.aggregate(
+					[
+						{$addFields: {"anno"     : {"$year" : "$data_spesa"},
+									  "mese"     : {"$month" : "$data_spesa"},
+							          "spesa": {$multiply:["$prezzo","$quantita"]}
+							         }
+						},
+						{$group:{"_id"           :{"anno":"$anno",
+												   "mese":"$mese"
+												  },
+						 		"spesa_totale"    :{$sum:"$spesa"
+											      }
+							    }   
+						}
+					]
+					);
+
+

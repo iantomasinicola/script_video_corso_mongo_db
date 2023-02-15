@@ -1,0 +1,82 @@
+/*****************************************/
+/*CREARE E AGGIORNARE IL DB   */
+/*****************************************/
+
+/*Esempio 1: PREDISPORRE LA CREAZIONE DI UN DATABASE
+Predisporre la creazione del database scuola*/
+
+use scuola;
+
+
+
+/*Esempio 2: CREARE UNA COLLECTION
+Creare all'interno di scuola la collection corsi 
+*/
+
+db.createCollection("corsi");
+
+
+
+/*Esempio 3: INSERIRE UN DOCUMENTO IN UNA COLLECTION
+Inserire un documento nella collection corsi
+Il documento è in formato JSON, sono presenti dunque coppie di chiavi-valore. 
+Il valore possono essere stringhe, interi, date, array, sottodocumenti...
+*/
+
+db.corsi.insertOne({"nome_corso"			: "Analisi dei dati con MongoDB",
+					"numero_partecipanti": 6,
+					"data_creazione"		: "2020-12-01",
+					"software_richiesti" : ["MongoDb",
+										   "Compass"],
+					"prezzo"			: null,
+					"attivo"			: true,
+					"docente"			: {"nome"    : "Nicola",
+											"cognome": "Iantomasi",
+											"email"  : ["nicola.iantomasi@yimp.it",
+														"iantomasi.nicola@gmail.com"]
+										   }
+					}
+					);
+
+
+
+/*Esempio 4:  
+Creare un'altra collection di nome sedi 
+*/
+db.createCollection("sedi");
+
+
+
+/*Esempio 5: ELIMINARE UNA COLLECTION
+Eliminare la collection sedi
+*/ 
+db.sedi.drop();
+
+
+
+/*Esempio 6: CREARE UNA COLLECTION INSERENDOCI UN DOCUMENTO
+Creare direttamente la collection studenti inserendoci un documento
+*/
+db.studenti.insertOne({"nome"   :"Giovanni",
+					   "cognome":"Rossi"
+					   }
+					  );
+
+
+
+/*Esempio 7: INSERIRE PIÙ DOCUMENTI IN UNA COLLECTION
+Inserire altri due documenti nella collection Studenti
+*/
+
+db.studenti.insertMany([{"nome"   :"Alberto",
+						 "cognome":"Verdi"
+						},
+						{"nome"   :"Nicola",
+						 "cognome":"Rossi",
+						 "citta"  :"Milano"
+						}
+					   ]
+					  );
+
+
+

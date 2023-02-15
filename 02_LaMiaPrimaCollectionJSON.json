@@ -1,0 +1,43 @@
+[
+	{"NomeCorso"		 : "Analisi dei dati con MongoDB",
+	 "NumeroPartecipanti": 6,
+	 "DataCreazione"	 : ISODate("2020-12-01"),
+	 "SoftwareRichiesti" : ["MongoDb", "Compass"],
+	 "Prezzo"			 : null,
+	 "Attivo"			 : true,
+	 "Docente"			 : {"Nome"   : "Nicola",
+							"Cognome": "Iantomasi",
+							"Email"  : ["nicola.iantomasi@yimp.it",
+										"iantomasi.nicola@gmail.com"]
+						   }
+	},
+
+	{"NomeCorso"		 : "Analisi dei dati con Python",
+	 "NumeroPartecipanti": 8,
+	 "SoftwareRichiesti" : ["Python 3", "Spyder"],
+	 "Prezzo"			 : 110.12,
+	 "Attivo"			 : true,
+	 "Docente"			 : [{"Nome"   : "Nicola",
+							"Cognome": "Iantomasi",
+							"Email"  : ["nicola.iantomasi@yimp.it",
+										"iantomasi.nicola@gmail.com"]
+							},
+							{"Nome"   : "Giovanni",
+							 "Cognome": "Rossi",
+							}
+						   ]
+	},
+
+	{"NomeCorso"		 : "SQL",
+	 "NumeroPartecipanti": 8,
+	 "SoftwareRichiesti" : "PostgreSQL",
+	 "Prezzo"			 : [110.12,123.15],
+	 "Attivo"			 : true,
+	 "Docente"			 : {"Nome"   : "Nicola",
+							"Cognome": "Iantomasi",
+							"Email"  : ["nicola.iantomasi@yimp.it",
+										"iantomasi.nicola@gmail.com"]
+						   }
+	}
+
+]
